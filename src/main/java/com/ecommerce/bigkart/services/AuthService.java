@@ -40,6 +40,10 @@ public class AuthService {
       authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(dto.getUsername(),dto.getPassword())
       );
-      UserEntity user=userRepository.findByUsername(dto.getUsername()).orElseThrow(()->new RuntimeException("User not found"));
+      UserEntity user=userRepository.findByUsername(dto.getUsername())
+              .orElseThrow(()->new RuntimeException("User not found"));
+
+      String token="a";
+      return new AuthResponseDTO(token, user.getUsername(),user.getRole().name());
     }
 }
