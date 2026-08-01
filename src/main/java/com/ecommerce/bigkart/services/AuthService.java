@@ -6,11 +6,14 @@ import com.ecommerce.bigkart.dto.RegisterDTO;
 import com.ecommerce.bigkart.entities.Role;
 import com.ecommerce.bigkart.entities.UserEntity;
 import com.ecommerce.bigkart.repository.UserRepository;
+import com.ecommerce.bigkart.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AuthService {
 
     @Autowired
@@ -21,6 +24,9 @@ public class AuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public String register(RegisterDTO dto) {
     if(userRepository.findByUsername(dto.getUsername()).isPresent()){
@@ -43,7 +49,7 @@ public class AuthService {
       UserEntity user=userRepository.findByUsername(dto.getUsername())
               .orElseThrow(()->new RuntimeException("User not found"));
 
-      String token="a";
+        String token = jwtUtil.generateToken(user.getUsername(),user.getRole().name());
       return new AuthResponseDTO(token, user.getUsername(),user.getRole().name());
     }
 }
